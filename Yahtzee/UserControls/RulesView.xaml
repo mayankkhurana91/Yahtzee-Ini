@@ -5,10 +5,18 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:Yahtzee.UserControls"
              mc:Ignorable="d" 
-             d:DesignHeight="450" d:DesignWidth="800">
-  
-    <StackPanel>
+             d:DesignHeight="500" d:DesignWidth="1000">
+
+  <StackPanel Margin="0,0,0,-23">
+   
+             <Label Content="Welcome to Yahtzee. Please go through the below rules before starting a New Game"
+                   FontFamily="Garamond" FontSize="20"  Height="41" />
+
+
+    <TextBlock FontSize="13"  FontFamily="Segoe UI" Foreground="Black" Height="191"><Run Text="The Objective of Yahtzee is to obtain the highest score from throwing 5 dice."/><LineBreak/><Run Text="⚫ Player : Single."/><LineBreak/><Run Text="⚫ Rounds : 12."/><LineBreak/><Run Text="⚫ In each round, you can roll the dices 3 times."/><LineBreak/><Run Text="⚫ In the 1st roll, all the dices have to be rolled together."/><LineBreak/><Run Text="⚫ In the 2nd and 3rd roll, some dices can be Held using the Hold Buttons."/><LineBreak/><Run Text="⚫ The player has to select a category, after the final roll (1st/2nd/3rd)."/><LineBreak/><Run Text="⚫ Each category carries a scoring criteria and can be selected only once"/><LineBreak/><Run Text="⚫ The final game score would be obtained by adding up the score obtained from each category."/><LineBreak/></TextBlock>
+
     <Image Source="/Yahtzee;component/Images/Rules.png" Stretch="None"></Image>
-    </StackPanel>
-  
+  </StackPanel>
+
 </UserControl>
+

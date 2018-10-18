@@ -59,10 +59,17 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
-    <Compile Include="Models\Dice.cs" />
+    <Compile Include="Models\CategoryBase.cs" />
+    <Compile Include="Models\CategoryFullHouse.cs" />
+    <Compile Include="Models\CategoryLargeStraight.cs" />
+    <Compile Include="Models\CategorySmallStraight.cs" />
+    <Compile Include="Models\DiceSupport.cs" />
     <Compile Include="Models\GameManager.cs" />
+    <Compile Include="Models\Dice.cs" />
+    <Compile Include="Models\ICategory.cs" />
+    <Compile Include="Models\LowerThreeCategory.cs" />
     <Compile Include="Models\Player.cs" />
-    <Compile Include="Models\ScoreBoard.cs" />
+    <Compile Include="Models\UpperSixCategory.cs" />
     <Compile Include="UserControls\DiceView.xaml.cs">
       <DependentUpon>DiceView.xaml</DependentUpon>
     </Compile>

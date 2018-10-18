@@ -1,5 +1,7 @@
 ﻿#region Statements
+using System.Collections.Generic;
 using System.Windows.Controls;
+using System.Windows.Media;
 using Image = System.Windows.Controls.Image;
 #endregion
 
@@ -8,470 +10,155 @@ namespace Yahtzee.Models
     /// <summary>
     /// Definition of Game Manager
     /// </summary>
-
     public class GameManager
     {
         #region Declaration
-        private bool _isValidCategory;
-
-        public  bool _isScoreBoardSelected;
         public Player player;
-        public ScoreBoard scoreBoard;
         #endregion
 
-        #region Initializaion
+        #region Initialization
         public GameManager()
         {
-            _isValidCategory = false;
-            _isScoreBoardSelected = false;
-            DiceTopPattern = new Image[] { new Image(), new Image(), new Image(), new Image(), new Image(), new Image(), new Image() }; // 6 Patterns for Dice Sides + 1 Blank Pattern
-            DiceTopNumberCount = new int[6] { 0, 0, 0, 0, 0, 0 };
             player = new Player();
-            scoreBoard = new ScoreBoard();
+            DiceTopPattern = new Image[] { new Image(), new Image(), new Image(), new Image(), new Image(), new Image(), new Image() }; // 6 Patterns for Dice Sides + 1 Blank Pattern
+            Dices = new Dice[] { new Dice(), new Dice(), new Dice(), new Dice(), new Dice() };
+
+            Categories = new List<ICategory>();
+            Categories.Add(new UpperSixCategory("CategoryAces", 1));
+            Categories.Add(new UpperSixCategory("CategoryTwos", 2));
+            Categories.Add(new UpperSixCategory("CategoryThrees", 3));
+            Categories.Add(new UpperSixCategory("CategoryFours", 4));
+            Categories.Add(new UpperSixCategory("CategoryFives", 5));
+            Categories.Add(new UpperSixCategory("CategorySixes", 6));
+            Categories.Add(new LowerThreeCategory("CategoryThreeOfAKind", 3));
+            Categories.Add(new LowerThreeCategory("CategoryFourOfAKind", 4));
+            Categories.Add(new LowerThreeCategory("CategoryFiveOfAKind", 5));
+            Categories.Add(new CategorySmallStraight("CategorySmallStraight", 10));
+            Categories.Add(new CategoryLargeStraight("CategoryLargeStraight", 11));
+            Categories.Add(new CategoryFullHouse("CategoryFullHouse", 12));
         }
         #endregion
-     
+
         #region Properties
+        /// <summary>
+        ///  Dices with a player : 5 in no.
+        /// </summary>
+        public Dice[] Dices
+        {
+            get;
+            set;
+        }
+
         /// <summary>
         /// Dice Sides Patterns  
         /// </summary>
-        public Image[] DiceTopPattern 
+        public Image[] DiceTopPattern
         {
             get;
             set;
         }
 
         /// <summary>
-        /// Frequency of Same Top Numbers seen when multiple dices are rolled together
+        /// Scoring Categories 
         /// </summary>
-        public int[] DiceTopNumberCount
+        public List<ICategory> Categories
         {
             get;
             set;
         }
 
-        /// <summary>
-        /// Sum of Same Top Numbers seen when multiple dices are rolled together
-        /// </summary>
-        public int[] DiceSameTopNumberSum
-        {
-            get;
-            set;
-        }
         #endregion
-
-        #region Public Methods
         /// <summary>
-        /// Taking a count of values seen on the top of multiple dices (after they are rolled together)
-        /// e.g. 1 is observed on a dice, increase the count of DiceTopNumberCount first element
+        ///  Rolling of Dices
         /// </summary>
-        public void CalculateDiceTopNumberCount()
+        public void RollDices()
         {
-            foreach (Dice d in player.Dices)
-
-                switch (d.TopNumber)
-                {
-                    case 1: 
-                        DiceTopNumberCount[0]++;
-                        break;
-                    case 2: 
-                        DiceTopNumberCount[1]++;
-                        break;
-                    case 3:
-                        DiceTopNumberCount[2]++;
-                        break;
-                    case 4:
-                        DiceTopNumberCount[3]++;
-                        break;
-                    case 5:
-                        DiceTopNumberCount[4]++;
-                        break;
-                    case 6:
-                        DiceTopNumberCount[5]++;
-                        break;
-                }
-        }
-
-        /// <summary>
-        /// Check if Valid Upper Categories : Ones, Twos, Threes, Fours, Fives, Sixes
-        /// </summary>
-
-        public bool CheckIfValidUpperCategory(int category)
-        {
-            if (DiceTopNumberCount[category] != 0)
+            foreach (Dice d in Dices)
             {
-                _isValidCategory = true;
+                d.Roll();
             }
-            return _isValidCategory;
-           
         }
 
         /// <summary>
-        /// Calculate sum of scores of same scores in the upper categories :  Ones, Twos, Threes, Fours, Fives, Sixes
+        /// Disabling Category Button in View
         /// </summary>
-        public int EvaluateDiceSumUpperCategory(int category) 
+        /// <param name="buttonName"></param>
+        /// <param name="value"></param>
+        public void DisableCategoryButton(Button buttonName)
         {
-            foreach (Dice d in player.Dices)
+            buttonName.IsEnabled = false;
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="dice"></param>
+        /// <param name="button"></param>
+        public void CheckHoldButtonState(Dice dice, Button button, string buttonContent)
+        {
+            if (dice.Hold == false)
             {
-                if (d.TopNumber == category)
-                {
-                    player.Score = player.Score + d.TopNumber;
-                }
+                dice.Hold = true;
+                button.Background = new SolidColorBrush(Colors.Yellow);
+                button.Content = "On Hold";
             }
-            return player.Score;
-        }
-
-        /// <summary>
-        /// Check if Valid Lower Categories : ThreeOfAKind, FourOfAKind, FiveOfAKind
-        /// </summary>
-        public bool CheckIfValidLowerCategory(int category)
-        {
-            for (int i = 0; i < DiceTopNumberCount.Length; i++)
+            else
             {
-                if (DiceTopNumberCount[i] == category)
-                {
-                    _isValidCategory = true;
-                }
+                dice.Hold = false;
+                button.Background = new SolidColorBrush(Colors.LightCoral);
+                button.Content = buttonContent;
             }
-            return _isValidCategory;
+
         }
 
-        /// <summary>
-        /// Calculate sum of scores of same scores in the lower categories :  ThreeOfAKind, FourOfAKind, FiveOfAKind
-        /// </summary>
-       
-        public int EvaluateDiceSumLowerCategory(int category) 
+        public void ResetHoldButtonsState(Button[] buttonGroup)
         {
-            for(int i = 0; i < DiceTopNumberCount.Length; i++)
+            foreach (Button button in buttonGroup)
             {
-                if (DiceTopNumberCount[i] == category)
+                button.Background = new SolidColorBrush(Colors.LightCoral);
+
+                if (button == buttonGroup[0])
                 {
-                    int pos = i;
-                    player.Score = player.Score + category * DiceTopNumberCount[pos-1];
-                    break;
+                    button.Content = "Hold D1";
+                }
+                else if (button == buttonGroup[1])
+                {
+                    button.Content = "Hold D2";
+                }
+                else if (button == buttonGroup[2])
+                {
+                    button.Content = "Hold D3";
+                }
+                else if (button == buttonGroup[3])
+                {
+                    button.Content = "Hold D4";
+                }
+                else
+                {
+                    button.Content = "Hold D5";
+                }
+
+                foreach (Dice d in Dices)
+                {
+                    d.Hold = false;
                 }
             }
-            return player.Score;
-        } 
-
-        /// <summary>
-        /// Check if valid Small Straight Category
-        /// </summary>
-        public bool CheckIfValidSmallStraight()
-        {
-
-            if (DiceTopNumberCount[0] >= 1 && DiceTopNumberCount[1] >= 1 && DiceTopNumberCount[2] >= 1 && DiceTopNumberCount[3] >= 1
-               ||
-               DiceTopNumberCount[1] >= 1 && DiceTopNumberCount[2] >= 1 && DiceTopNumberCount[3] >= 1 && DiceTopNumberCount[4] >= 1
-               ||
-               DiceTopNumberCount[2] >= 1 && DiceTopNumberCount[3] >= 1 && DiceTopNumberCount[4] >= 1 && DiceTopNumberCount[5] >= 1)
-            {
-                _isValidCategory = true;
-            }
-            return _isValidCategory;
         }
 
         /// <summary>
-        /// Check if valid Large Straight Category
+        /// Resetting the game
         /// </summary>
-        public bool CheckIfValidLargeStraight()
+        public void ResetGame(Button[] buttonGroup)
         {
-            if (DiceTopNumberCount[0] == 1 && DiceTopNumberCount[1] == 1 && DiceTopNumberCount[2] == 1 && DiceTopNumberCount[3] == 1 &&
-                DiceTopNumberCount[4] == 1
-                ||
-                DiceTopNumberCount[1] == 1 && DiceTopNumberCount[2] == 1 && DiceTopNumberCount[3] == 1 && DiceTopNumberCount[4] == 1 &&
-                DiceTopNumberCount[5] == 1)
+            foreach (Button b in buttonGroup)
             {
-                _isValidCategory = true;
-            }
-            return _isValidCategory;
-        }
-
-        /// <summary>
-        /// Check if valid Full House Category
-        /// </summary>
-        public bool CheckIfValidFullHouse()
-        {
-            for (int i = 0; i < DiceTopNumberCount.Length; i++)    //DiceResults = new int[6] { 0, 0, 0, 0, 0, 0 }; // 6 sides
-            {
-                if (DiceTopNumberCount[i] == 3)
+                if (b.IsEnabled == false)
                 {
-                    for (int j = 0; j < DiceTopNumberCount.Length; j++)
-                    {
-                        if (DiceTopNumberCount[j] == 2)
-                        {
-                            _isValidCategory = true;       // 3, 3 ,3, 2, 2
-                        }
-                    }
+                    b.IsEnabled = true;
                 }
             }
-            return _isValidCategory;
-        }
-
-        public void EnableOrDisableButton(Button buttonName, bool value)
-        {
-            //button.Content = "Entry Completeted";
-            buttonName.IsEnabled = value;
-        }
-        
-        /// <summary>
-        /// Reset Dice Counters 
-        /// </summary>
-        public void ResetGameCounters()
-        {
-            for (int i = 0; i < DiceTopNumberCount.Length; i++)
-                DiceTopNumberCount[i] = 0;
-
-            _isValidCategory = false;
+            player.Score = 0;
+            //ResetHoldButtonsState(buttonGroup);
         }
     }
 }
-
-        #endregion
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

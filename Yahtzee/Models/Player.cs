@@ -7,26 +7,19 @@ namespace Yahtzee.Models
     /// </summary>
     public class Player
     {
+        #region Declaration
+        private int _chance = 3;
+        #endregion
+
 
         #region Initializaion
         public Player()
         {
-            Dices = new Dice[] { new Dice(), new Dice(), new Dice(), new Dice(), new Dice() };
             Score = 0;
-            Chances = 0;
         }
         #endregion
 
         #region Properties
-        /// <summary>
-        /// Player Name
-        /// </summary>
-        public string PlayerName
-        {
-            get;
-            set;
-        }
-
         /// <summary>
         /// Player Score
         /// </summary>
@@ -37,34 +30,24 @@ namespace Yahtzee.Models
         }
 
         /// <summary>
-        ///  Dices with a player : 5 in no.
+        /// Chances to Roll : 3
         /// </summary>
-        public Dice[] Dices
+        public int Chance
         {
-            get;
-            set;
+            get => _chance;
+            set => _chance = value;
         }
 
-        /// <summary>
-        ///  Chances with a player 
-        /// </summary>
-        public int Chances
-        {
-            get;
-            set;
-        }
         #endregion
 
         #region Public Methods
         /// <summary>
-        ///  Rolling of Dices
+        /// Updating player's score
         /// </summary>
-        public void RollDices()
+        /// <param name="toBeAddedScore"></param>
+        public void AddToScore(int toBeAddedScore)
         {
-            foreach (Dice d in Dices)
-            {
-                d.Roll();
-            }
+            Score += toBeAddedScore;
         }
         #endregion
     }

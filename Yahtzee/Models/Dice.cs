@@ -13,6 +13,7 @@ namespace Yahtzee.Models
         public Dice() 
         {
             TopNumber = 0;
+            Hold = false;
         }
         #endregion
 
@@ -25,6 +26,15 @@ namespace Yahtzee.Models
             get;
             set;
         }
+        /// <summary>
+        /// Dice Hold Property
+        /// </summary>
+        public bool Hold
+        {
+            get;
+            set;
+        }
+
         #endregion
 
         #region Public Methods
@@ -33,8 +43,11 @@ namespace Yahtzee.Models
         /// </summary>
         public void Roll()
         {
-            System.Threading.Thread.Sleep(20);
-            TopNumber = new Random().Next(1, 6 + 1);
+            if (!Hold)
+            {
+                System.Threading.Thread.Sleep(20);
+                TopNumber = new Random().Next(1, 6 + 1);
+            }
         }
         #endregion
     }

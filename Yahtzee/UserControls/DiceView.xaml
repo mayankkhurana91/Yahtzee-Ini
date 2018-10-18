@@ -6,7 +6,10 @@
              mc:Ignorable="d"
              d:DesignHeight="500"
              d:DesignWidth="800">
-  <StackPanel>
+  <StackPanel 
+    Visibility="Visible" 
+    HorizontalAlignment="Stretch" 
+    Background="LightSkyBlue">
     <Grid Margin="490,35,4,106.6"
           Height="440">
       <Grid.RowDefinitions>
@@ -26,7 +29,7 @@
         <RowDefinition Height="15*" />
 
       </Grid.RowDefinitions>
-      <Button x:Name="Aces"
+      <Button x:Name="btnAces"
               x:FieldModifier="public"
               Content="Aces (Total of 1's)"
               HorizontalAlignment="Left"
@@ -37,7 +40,7 @@
               Click="OnScoreBoardClick"
               Grid.Row="1"
               FontStretch="SemiCondensed"/>
-      <Button x:Name="Twos"
+      <Button x:Name="btnTwos"
               x:FieldModifier="public"
               Content="Two's (Total of 2's)"
               HorizontalAlignment="Left"
@@ -49,7 +52,7 @@
               Click="OnScoreBoardClick"
               Grid.Row="2"
               FontStretch="Expanded" />
-      <Button x:Name="Threes"
+      <Button x:Name="btnThrees"
               x:FieldModifier="public"
               Content="Threes (Total of 3's)"
               HorizontalAlignment="Left"
@@ -61,7 +64,7 @@
               Click="OnScoreBoardClick"
               Grid.Row="3"
               FontStretch="Expanded" />
-      <Button x:Name="Fours"
+      <Button x:Name="btnFours"
              x:FieldModifier="public" 
               Content="Fours (Total of 4's)"
               HorizontalAlignment="Left"
@@ -73,7 +76,7 @@
               Click="OnScoreBoardClick"
               Grid.Row="4"
               FontStretch="Expanded" />
-      <Button x:Name="Fives"
+      <Button x:Name="btnFives"
               x:FieldModifier="public" 
               Content="Fives (Total of 5's)"
               HorizontalAlignment="Left"
@@ -85,7 +88,7 @@
               Click="OnScoreBoardClick"
               Grid.Row="5"
               FontStretch="Expanded" />
-      <Button x:Name="Sixes"
+      <Button x:Name="btnSixes"
               x:FieldModifier="public" 
               Content="Sixes (Total of 6's)"
               HorizontalAlignment="Left"
@@ -97,7 +100,7 @@
               Click="OnScoreBoardClick"
               Grid.Row="6"
               FontStretch="Expanded" />
-      <Button x:Name="ThreeOfAKind"
+      <Button x:Name="btnThreeOfAKind"
               Content="Three Of A Kind"
               HorizontalAlignment="Left"
               Margin="0,0.4,0,0"
@@ -108,7 +111,7 @@
               Click="OnScoreBoardClick"
               Grid.Row="7"
               FontStretch="Expanded" />
-      <Button x:Name="FourOfAKind"
+      <Button x:Name="btnFourOfAKind"
               Content="Four Of A Kind"
               HorizontalAlignment="Left"
               Margin="0,0.4,0,0"
@@ -119,7 +122,7 @@
               Click="OnScoreBoardClick"
               Grid.Row="8"
               FontStretch="Expanded" />
-      <Button x:Name="FullHouse"
+      <Button x:Name="btnFullHouse"
               Content="Full House (Score 25)"
               HorizontalAlignment="Left"
               Margin="0,0.4,0,0"
@@ -130,7 +133,7 @@
               Click="OnScoreBoardClick"
               Grid.Row="9"
               FontStretch="Expanded" />
-      <Button x:Name="SmallStraight"
+      <Button x:Name="btnSmallStraight"
               Content="Small Straight (Score 30)"
               HorizontalAlignment="Left"
               Margin="0,0.4,0,0"
@@ -141,7 +144,7 @@
               Click="OnScoreBoardClick"
               Grid.Row="10"
               FontStretch="Expanded" />
-      <Button x:Name="LargeStraight"
+      <Button x:Name="btnLargeStraight"
               Content="Large Straight (Score 40)"
               HorizontalAlignment="Left"
               Margin="0,0.4,0,0"
@@ -151,7 +154,7 @@
               Grid.Row="11"
               Height="30"
               RenderTransformOrigin="0.498,1.628" />
-      <Button x:Name="Yahtzee"
+      <Button x:Name="btnYahtzee"
               Content="Yahtzee (Score 50)"
               HorizontalAlignment="Left"
               Margin="0,0.4,0,0"
@@ -170,31 +173,31 @@
                     HorizontalAlignment="Left"
                     Width="350"
                     Margin="0,0,-0.2,0">
-          <Image x:Name="lbl_dice1"
+          <Image x:Name="lblDice1"
                  x:FieldModifier="public"
                  Source="/Yahtzee;component/Images/dice_blank.png"
                  Width="65"
                  RenderTransformOrigin="0.5,0.5"
                  Margin="0,0,0,0.2"/>
-          <Image x:Name="lbl_dice2"
+          <Image x:Name="lblDice2"
                  x:FieldModifier="public"
                  Source="/Yahtzee;component/Images/dice_blank.png"
                  Width="65"
                  RenderTransformOrigin="0.5,0.5"
                  Margin="0,0,0,0.2" />
-          <Image x:Name="lbl_dice3"
+          <Image x:Name="lblDice3"
                  x:FieldModifier="public"
                  Source="/Yahtzee;component/Images/dice_blank.png"
                  Width="65"
                  RenderTransformOrigin="0.5,0.5"
                  Margin="0,0,0,0.2" />
-          <Image x:Name="lbl_dice4"
+          <Image x:Name="lblDice4"
                  x:FieldModifier="public"
                  Source="/Yahtzee;component/Images/dice_blank.png"
                  Width="65"
                  RenderTransformOrigin="0.5,0.5"
                  Margin="0,0,0,0.2" />
-          <Image x:Name="lbl_dice5"
+          <Image x:Name="lblDice5"
                  x:FieldModifier="public"
                  Source="/Yahtzee;component/Images/dice_blank.png"
                  Width="65"
@@ -202,31 +205,104 @@
                  Margin="0,0,0,0.2" />
         </StackPanel>
 
+        <Button
+          x:Name="btnHoldD1" 
+          x:FieldModifier="public"
+          Content="Hold D1"
+          Background="LightCoral"
+          Height="29"
+          Click="OnHoldButtonClick"
+          FontSize="10"
+          FontStretch="Condensed" 
+          HorizontalAlignment="Left" 
+          Width="64"/>
+
+        <Button 
+          x:Name="btnHoldD2" 
+          x:FieldModifier="public"
+          Content="Hold D2" 
+          Background="LightCoral"
+          Margin="64,-30,0,0" 
+          Height="29"
+          Click="OnHoldButtonClick"
+          FontSize="10"
+          FontStretch="Condensed" 
+          HorizontalAlignment="Left" 
+          Width="64"/>
+
+        <Button 
+          x:Name="btnHoldD3" 
+          x:FieldModifier="public"
+          Content="Hold D3" 
+          Background="LightCoral"
+          Margin="129,-30,0,0" 
+          Height="29"
+         Click="OnHoldButtonClick"
+          FontSize="10"
+          FontStretch="Condensed" 
+          HorizontalAlignment="Left" 
+          Width="64"/>
+
+        <Button 
+          x:Name="btnHoldD4" 
+          x:FieldModifier="public"
+          Content="Hold D4" 
+          Background="LightCoral"
+          Margin="194,-30,0,0" 
+          Height="29"
+          Click="OnHoldButtonClick"
+          FontSize="10"
+          FontStretch="Condensed" 
+          HorizontalAlignment="Left" 
+          Width="64"/>
+
+        <Button 
+          x:Name="btnHoldD5" 
+          x:FieldModifier="public"
+          Content="Hold D5" 
+          Background="LightCoral"
+          Margin="259,-30,0,0" 
+          Height="29"
+         Click="OnHoldButtonClick"
+          FontSize="10"
+          FontStretch="Condensed" 
+          HorizontalAlignment="Left" 
+          Width="64"/>
+
+
       </StackPanel>
-      <Button x:Name="RollDices"
+      <Button x:Name="btnRollDices"
               Content="Roll Dices"
               HorizontalAlignment="Left"
-              Margin="-424,6,0,0"
+              Margin="-489,5.8,0,18.4"
+              Grid.Row="7"
+              Grid.RowSpan="2"
+              Width="222" 
+              Click="OnRollButtonClick"/>
+      <Button x:Name="btnResetGame"
+              Content="Reset Game"
+              HorizontalAlignment="Left"
+              Margin="-220,5.8,0,0"
               Grid.Row="7"
               Grid.RowSpan="2"
               VerticalAlignment="Top"
-              Width="209"
+              Width="122"
               Height="39" 
-              Click="OnRollButtonClick"/>
+              Click="OnResetButtonClick"/>
 
-      <Label Name="lbl_results" 
+      <Label Name="lblResults" 
               x:FieldModifier="public" 
              HorizontalAlignment="Left" 
-             Margin="-489,10.6,0,-8" 
+             Margin="-489,10.6,0,0" 
              Grid.Row="9" 
              VerticalAlignment="Top" 
-             Height="155" 
-             Grid.RowSpan="5" 
-             Width="475" 
-             Content="lbl_results" 
+             Height="83" 
+             Grid.RowSpan="3" 
+             Width="391" 
+             Content="lblResults" 
              FontSize="15" 
-             FontWeight="Bold" 
-             AutomationProperties.Name="lbl_displayResults"/>
+             FontWeight="Bold"
+             AutomationProperties.Name="lbldisplayResults"/>
       <TextBlock x:Name="Category"
                  HorizontalAlignment="Left"
                  Margin="52,-9,0,0"
