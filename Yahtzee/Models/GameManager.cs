@@ -14,6 +14,7 @@ namespace Yahtzee.Models
     {
         #region Declaration
         public Player player;
+        public bool AreDicesRolled;
         #endregion
 
         #region Initialization
@@ -22,6 +23,7 @@ namespace Yahtzee.Models
             player = new Player();
             DiceTopPattern = new Image[] { new Image(), new Image(), new Image(), new Image(), new Image(), new Image(), new Image() }; // 6 Patterns for Dice Sides + 1 Blank Pattern
             Dices = new Dice[] { new Dice(), new Dice(), new Dice(), new Dice(), new Dice() };
+            AreDicesRolled = false;
 
             Categories = new List<ICategory>();
             Categories.Add(new UpperSixCategory("CategoryAces", 1));
@@ -77,6 +79,7 @@ namespace Yahtzee.Models
             {
                 d.Roll();
             }
+
         }
 
         /// <summary>
@@ -90,7 +93,7 @@ namespace Yahtzee.Models
         }
 
         /// <summary>
-        /// 
+        /// Checking the state of Hold Button & Dice Hold State
         /// </summary>
         /// <param name="dice"></param>
         /// <param name="button"></param>
@@ -111,25 +114,25 @@ namespace Yahtzee.Models
 
         }
 
-        public void ResetHoldButtonsState(Button[] buttonGroup)
+        public void ResetHoldButtonsState(Button[] holdButtonGroup)
         {
-            foreach (Button button in buttonGroup)
+            foreach (Button button in holdButtonGroup)
             {
                 button.Background = new SolidColorBrush(Colors.LightCoral);
 
-                if (button == buttonGroup[0])
+                if (button == holdButtonGroup[0])
                 {
                     button.Content = "Hold D1";
                 }
-                else if (button == buttonGroup[1])
+                else if (button == holdButtonGroup[1])
                 {
                     button.Content = "Hold D2";
                 }
-                else if (button == buttonGroup[2])
+                else if (button == holdButtonGroup[2])
                 {
                     button.Content = "Hold D3";
                 }
-                else if (button == buttonGroup[3])
+                else if (button == holdButtonGroup[3])
                 {
                     button.Content = "Hold D4";
                 }
@@ -148,17 +151,26 @@ namespace Yahtzee.Models
         /// <summary>
         /// Resetting the game
         /// </summary>
-        public void ResetGame(Button[] buttonGroup)
+        public void ResetGame(Button[] categoryButtonGroup, Button[] holdButtonGroup, Button rollDicesButton)
         {
-            foreach (Button b in buttonGroup)
+            foreach (Button b in categoryButtonGroup)
             {
                 if (b.IsEnabled == false)
                 {
                     b.IsEnabled = true;
                 }
             }
+
+            if (rollDicesButton.IsEnabled == false)
+            {
+                rollDicesButton.IsEnabled = true;
+            }
+
             player.Score = 0;
-            //ResetHoldButtonsState(buttonGroup);
+            player.Chance = 3;
+            player.Rounds = 1;
+            AreDicesRolled = false;
+            ResetHoldButtonsState(holdButtonGroup);
         }
     }
 }

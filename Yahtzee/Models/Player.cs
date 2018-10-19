@@ -9,6 +9,7 @@ namespace Yahtzee.Models
     {
         #region Declaration
         private int _chance = 3;
+        private int _rounds = 1;
         #endregion
 
 
@@ -38,6 +39,17 @@ namespace Yahtzee.Models
             set => _chance = value;
         }
 
+        /// <summary>
+        /// Rounds to Roll : 12
+        /// </summary>
+        public int Rounds
+        {
+            get => _rounds;
+            set => _rounds = value;
+        }
+
+
+       
         #endregion
 
         #region Public Methods
