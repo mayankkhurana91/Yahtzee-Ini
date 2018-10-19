@@ -1,10 +1,9 @@
 ﻿#region Statements
 using System;
-using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using Yahtzee.Models;
 #endregion
@@ -14,10 +13,13 @@ namespace Yahtzee.UserControls
     /// <summary>
     /// Interaction logic for DiceView.xaml
     /// </summary>
-    public partial class DiceView : UserControl
+    public partial class DiceView : UserControl, INotifyPropertyChanged​
     {
         #region Declaration
         private GameManager _gmanager = new GameManager();
+
+        public event PropertyChangedEventHandler PropertyChanged;
+
         #endregion
 
         #region Initializaion
@@ -49,104 +51,119 @@ namespace Yahtzee.UserControls
         #region Event Handlers
         private void OnRollButtonClick(object sender, RoutedEventArgs e)
         {
-
             _gmanager.player.Chance--;
 
             if (_gmanager.player.Chance >= 0)
             {
                 _gmanager.RollDices();
+                _gmanager.AreDicesRolled = true;
                 DicesViewAfterRoll();
-                lblResults.Content = "Current Score : " + _gmanager.player.Score +  " Chances Left : " + _gmanager.player.Chance;
+                if(_gmanager.player.Chance == 0)
+                {
+                    btnRollDices.IsEnabled = false;
+                }
             }
-            else
-            {
-                MessageBox.Show("You have exhausted your three chances. Please select a category");
-                btnRollDices.IsEnabled = false;
-            }
+            lblResults.Content = "Current Score : " + _gmanager.player.Score + ", Round : " + _gmanager.player.Rounds + ",  Rolls Left : " + _gmanager.player.Chance;
         }
 
         private void OnScoreBoardClick(object sender, RoutedEventArgs e)
         {
-            if (sender.Equals(btnAces))
+            if (_gmanager.AreDicesRolled)
             {
-                _gmanager.player.AddToScore(_gmanager.Categories.FirstOrDefault(c => c.Name.Equals("CategoryAces")).Evaluate(_gmanager.Dices));
-                _gmanager.DisableCategoryButton(CategoryButtonGroup[0]);
-
-            }
-            else if (sender.Equals(btnTwos))
-            {
-                _gmanager.player.AddToScore(_gmanager.Categories.FirstOrDefault(c => c.Name.Equals("CategoryTwos")).Evaluate(_gmanager.Dices));
-                _gmanager.DisableCategoryButton(CategoryButtonGroup[1]);
-            }
-            else if (sender.Equals(btnThrees))
-            {
-                _gmanager.player.AddToScore(_gmanager.Categories.FirstOrDefault(c => c.Name.Equals("CategoryThrees")).Evaluate(_gmanager.Dices));
-                _gmanager.DisableCategoryButton(CategoryButtonGroup[2]);
-            }
-            else if (sender.Equals(btnFours))
-            {
-                _gmanager.player.AddToScore(_gmanager.Categories.FirstOrDefault(c => c.Name.Equals("CategoryFours")).Evaluate(_gmanager.Dices));
-                _gmanager.DisableCategoryButton(CategoryButtonGroup[3]);
-            }
-            else if (sender.Equals(btnFives))
-            {
-                _gmanager.player.AddToScore(_gmanager.Categories.FirstOrDefault(c => c.Name.Equals("CategoryFives")).Evaluate(_gmanager.Dices));
-                _gmanager.DisableCategoryButton(CategoryButtonGroup[4]);
-            }
-            else if (sender.Equals(btnSixes))
-            {
-                _gmanager.player.AddToScore(_gmanager.Categories.FirstOrDefault(c => c.Name.Equals("CategorySixes")).Evaluate(_gmanager.Dices));
-                _gmanager.DisableCategoryButton(CategoryButtonGroup[5]);
-            }
-
-            else if (sender.Equals(btnThreeOfAKind))
-            {
-                _gmanager.player.AddToScore(_gmanager.Categories.FirstOrDefault(c => c.Name.Equals("CategoryThreeOfAKind")).Evaluate(_gmanager.Dices));
-                _gmanager.DisableCategoryButton(CategoryButtonGroup[6]);
-            }
-            else if (sender.Equals(btnFourOfAKind))
-            {
-                _gmanager.player.AddToScore(_gmanager.Categories.FirstOrDefault(c => c.Name.Equals("CategoryFourOfAKind")).Evaluate(_gmanager.Dices));
-                _gmanager.DisableCategoryButton(CategoryButtonGroup[7]);
-            }
-            else if (sender.Equals(btnYahtzee))
-            {
-                _gmanager.player.AddToScore(_gmanager.Categories.FirstOrDefault(c => c.Name.Equals("CategoryFiveOfAKind")).Evaluate(_gmanager.Dices));
-                _gmanager.DisableCategoryButton(CategoryButtonGroup[8]);
-            }
-            else if (sender.Equals(btnSmallStraight))
-            {
-                _gmanager.player.AddToScore(_gmanager.Categories.FirstOrDefault(c => c.Name.Equals("CategorySmallStraight")).Evaluate(_gmanager.Dices));
-                _gmanager.DisableCategoryButton(CategoryButtonGroup[9]);
-            }
-            else if (sender.Equals(btnLargeStraight))
-            {
-                _gmanager.player.AddToScore(_gmanager.Categories.FirstOrDefault(c => c.Name.Equals("CategoryLargeStraight")).Evaluate(_gmanager.Dices));
-                _gmanager.DisableCategoryButton(CategoryButtonGroup[10]);
-            }
-            else if (sender.Equals(btnFullHouse))
-            {
-                _gmanager.player.AddToScore(_gmanager.Categories.FirstOrDefault(c => c.Name.Equals("CategoryFives")).Evaluate(_gmanager.Dices));
-                _gmanager.DisableCategoryButton(CategoryButtonGroup[11]);
-            }
-
-            _gmanager.player.Chance = 3;
-            lblResults.Content = "Current Score : " + _gmanager.player.Score + " Chances Left : " + _gmanager.player.Chance;
-            btnRollDices.IsEnabled = true;
-            _gmanager.ResetHoldButtonsState(HoldButtonGroup);
-
-            if (CountTrues(CategoryButtonGroup) >= 12)
-            {
-                MessageBox.Show("Game Over. Your Score is : " + _gmanager.player.Score);
-                _gmanager.ResetGame(CategoryButtonGroup);
-                lblResults.Content = "Roll the Dice!";
-                if (btnRollDices.IsEnabled == false)
+                if (sender.Equals(btnAces))
                 {
-                    btnRollDices.IsEnabled = true;
+                    _gmanager.player.AddToScore(_gmanager.Categories.FirstOrDefault(c => c.Name.Equals("CategoryAces")).Evaluate(_gmanager.Dices));
+                    _gmanager.DisableCategoryButton(CategoryButtonGroup[0]);
+
+                }
+                else if (sender.Equals(btnTwos))
+                {
+                    _gmanager.player.AddToScore(_gmanager.Categories.FirstOrDefault(c => c.Name.Equals("CategoryTwos")).Evaluate(_gmanager.Dices));
+                    _gmanager.DisableCategoryButton(CategoryButtonGroup[1]);
+                }
+                else if (sender.Equals(btnThrees))
+                {
+                    _gmanager.player.AddToScore(_gmanager.Categories.FirstOrDefault(c => c.Name.Equals("CategoryThrees")).Evaluate(_gmanager.Dices));
+                    _gmanager.DisableCategoryButton(CategoryButtonGroup[2]);
+                }
+                else if (sender.Equals(btnFours))
+                {
+                    _gmanager.player.AddToScore(_gmanager.Categories.FirstOrDefault(c => c.Name.Equals("CategoryFours")).Evaluate(_gmanager.Dices));
+                    _gmanager.DisableCategoryButton(CategoryButtonGroup[3]);
+                }
+                else if (sender.Equals(btnFives))
+                {
+                    _gmanager.player.AddToScore(_gmanager.Categories.FirstOrDefault(c => c.Name.Equals("CategoryFives")).Evaluate(_gmanager.Dices));
+                    _gmanager.DisableCategoryButton(CategoryButtonGroup[4]);
+                }
+                else if (sender.Equals(btnSixes))
+                {
+                    _gmanager.player.AddToScore(_gmanager.Categories.FirstOrDefault(c => c.Name.Equals("CategorySixes")).Evaluate(_gmanager.Dices));
+                    _gmanager.DisableCategoryButton(CategoryButtonGroup[5]);
+                }
+
+                else if (sender.Equals(btnThreeOfAKind))
+                {
+                    _gmanager.player.AddToScore(_gmanager.Categories.FirstOrDefault(c => c.Name.Equals("CategoryThreeOfAKind")).Evaluate(_gmanager.Dices));
+                    _gmanager.DisableCategoryButton(CategoryButtonGroup[6]);
+                }
+                else if (sender.Equals(btnFourOfAKind))
+                {
+                    _gmanager.player.AddToScore(_gmanager.Categories.FirstOrDefault(c => c.Name.Equals("CategoryFourOfAKind")).Evaluate(_gmanager.Dices));
+                    _gmanager.DisableCategoryButton(CategoryButtonGroup[7]);
+                }
+                else if (sender.Equals(btnYahtzee))
+                {
+                    _gmanager.player.AddToScore(_gmanager.Categories.FirstOrDefault(c => c.Name.Equals("CategoryFiveOfAKind")).Evaluate(_gmanager.Dices));
+                    _gmanager.DisableCategoryButton(CategoryButtonGroup[8]);
+                }
+                else if (sender.Equals(btnSmallStraight))
+                {
+                    _gmanager.player.AddToScore(_gmanager.Categories.FirstOrDefault(c => c.Name.Equals("CategorySmallStraight")).Evaluate(_gmanager.Dices));
+                    _gmanager.DisableCategoryButton(CategoryButtonGroup[9]);
+                }
+                else if (sender.Equals(btnLargeStraight))
+                {
+                    _gmanager.player.AddToScore(_gmanager.Categories.FirstOrDefault(c => c.Name.Equals("CategoryLargeStraight")).Evaluate(_gmanager.Dices));
+                    _gmanager.DisableCategoryButton(CategoryButtonGroup[10]);
+                }
+                else if (sender.Equals(btnFullHouse))
+                {
+                    _gmanager.player.AddToScore(_gmanager.Categories.FirstOrDefault(c => c.Name.Equals("CategoryFullHouse")).Evaluate(_gmanager.Dices));
+                    _gmanager.DisableCategoryButton(CategoryButtonGroup[11]);
+                }
+
+
+                _gmanager.player.Chance = 3;
+                _gmanager.player.Rounds++;
+                lblResults.Content = "Current Score : " + _gmanager.player.Score + ", Round : " + _gmanager.player.Rounds + ",  Rolls Left : " + _gmanager.player.Chance;
+       
+                btnRollDices.IsEnabled = true;
+                _gmanager.ResetHoldButtonsState(HoldButtonGroup);
+                _gmanager.AreDicesRolled = false;
+
+
+                if (CountTrues(CategoryButtonGroup) >= 12)
+                {
+                    MessageBox.Show("Game Over. Your Score is : " + _gmanager.player.Score);
+                    _gmanager.ResetGame(CategoryButtonGroup, HoldButtonGroup, btnRollDices);
+                    //_gmanager.player.Rounds = 0;
+                    lblResults.Content = "Roll the Dice!";
+
+
+                    if (btnRollDices.IsEnabled == false)
+                    {
+                        btnRollDices.IsEnabled = true;
+                    }
                 }
             }
-        }
+            else
+            {
+                MessageBox.Show("Please Roll Dices, before selecting any category!");
+            }
 
+            
+        }
 
         public int CountTrues(Button[] buttons)
         {
@@ -175,40 +192,38 @@ namespace Yahtzee.UserControls
             return booleans.Count(b => b);
         }
 
-        
-
         private void OnHoldButtonClick(object sender, RoutedEventArgs e)
         {
-            if (sender.Equals(btnHoldD1))
+            if (_gmanager.AreDicesRolled)
             {
-                _gmanager.CheckHoldButtonState(_gmanager.Dices[0], btnHoldD1, "Hold D1");
-            }
-            else if (sender.Equals(btnHoldD2))
-            {
-                _gmanager.CheckHoldButtonState(_gmanager.Dices[1], btnHoldD2, "Hold D2");
-            }
-            else if (sender.Equals(btnHoldD3))
-            {
-                _gmanager.CheckHoldButtonState(_gmanager.Dices[2], btnHoldD3, "Hold D3");
-            }
-            else if (sender.Equals(btnHoldD4))
-            {
-                _gmanager.CheckHoldButtonState(_gmanager.Dices[3], btnHoldD4, "Hold D4");
-            }
-            else if (sender.Equals(btnHoldD5))
-            {
-                _gmanager.CheckHoldButtonState(_gmanager.Dices[4], btnHoldD5, "Hold D5");
+                if (sender.Equals(btnHoldD1))
+                {
+                    _gmanager.CheckHoldButtonState(_gmanager.Dices[0], btnHoldD1, "Hold D1");
+                }
+                else if (sender.Equals(btnHoldD2))
+                {
+                    _gmanager.CheckHoldButtonState(_gmanager.Dices[1], btnHoldD2, "Hold D2");
+                }
+                else if (sender.Equals(btnHoldD3))
+                {
+                    _gmanager.CheckHoldButtonState(_gmanager.Dices[2], btnHoldD3, "Hold D3");
+                }
+                else if (sender.Equals(btnHoldD4))
+                {
+                    _gmanager.CheckHoldButtonState(_gmanager.Dices[3], btnHoldD4, "Hold D4");
+                }
+                else if (sender.Equals(btnHoldD5))
+                {
+                    _gmanager.CheckHoldButtonState(_gmanager.Dices[4], btnHoldD5, "Hold D5");
+                }
             }
         }
 
         private void OnResetButtonClick(object sender, RoutedEventArgs e)
         {
-            _gmanager.ResetGame(CategoryButtonGroup);
+            _gmanager.ResetGame(CategoryButtonGroup, HoldButtonGroup, btnRollDices);
+
             lblResults.Content = "Roll the Dice!";
-            if (btnRollDices.IsEnabled == false)
-            {
-                btnRollDices.IsEnabled = true;
-            }
         }
         #endregion
 
